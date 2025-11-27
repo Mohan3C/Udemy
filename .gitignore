@@ -1,32 +1,3 @@
-/server/
-/venv/
-/**/*.pyc
-/**/**/*.pyc
-__pycache__
-db.sqlite3
-/static/
-/media/
-.DS_Store
-.idea/
-.vscode/
-*.log
-.env
-*.sqlite3
-*.pyo
-*.pyd
-*.swp
-*.swo
-*.bak
-*.orig
-*.tmp
-*.coverage
-.coverage.*
-
-
-*.pyc
-__pycache__/
-/__pycache__
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -243,7 +214,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-
-__pycache__/
-*.pyc
