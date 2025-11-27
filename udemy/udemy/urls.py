@@ -24,5 +24,5 @@ urlpatterns = [
 
 
     # user 
-    path("",home,name="home")
+   
 ]
