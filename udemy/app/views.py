@@ -5,6 +5,10 @@ from .serializers import *
 
 
 # Create your views here.
+class Userviewset(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = Userserializer
+
 class Categoryviewset(viewsets.ModelViewSet):
     queryset=Category.objects.all()
     serializer_class=Categoryserializer

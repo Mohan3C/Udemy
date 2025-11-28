@@ -1,5 +1,11 @@
 from rest_framework import serializers,viewsets,routers
 from .models import Category,Course,Topic,Programminglanguage
+from django.contrib.auth.models import User
+
+class Userserializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
 class Categoryserializer(serializers.ModelSerializer):
     class Meta:
