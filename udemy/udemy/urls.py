@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 from rest_framework import routers
 
 router=routers.DefaultRouter()
+router.register(r'User', Userviewset)
 router.register(r'Category',Categoryviewset)
 router.register(r'Course',Courseviewset)
 router.register(r'Topic',Topicviewset)
