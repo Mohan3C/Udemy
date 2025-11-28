@@ -1,4 +1,5 @@
 # Byte-compiled / optimized / DLL files
+
 __pycache__/
 *.py[codz]
 *$py.class
@@ -151,14 +152,22 @@ activemq-data/
 .env
 .envrc
 .venv
-server
-.server
-server/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+server
+server/
+.server
+server/
+venv/
+env/
+*.pyc
+__pycache__/
+/server
+/venv
+
 
 # Spyder project settings
 .spyderproject
