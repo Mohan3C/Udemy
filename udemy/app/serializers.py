@@ -1,5 +1,17 @@
 from rest_framework import serializers,viewsets,routers
-from .models import Category,Course,Topic,Programminglanguage
+from .models import *
+from django.contrib.auth.models import User
+
+class Userserializer(serializers.ModelSerializer):
+    username = serializers.CharField(source = "user.username", read_only = True)
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email']
+
+class UserRoleserializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRole
+        fields = ['id', 'username', 'password', 'email', 'role']
 
 class Categoryserializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +32,20 @@ class Programminglanguageserializer(serializers.ModelSerializer):
     class Meta:
         model=Programminglanguage
         fields="__all__"
+
+class PaymentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source = "user.username", read_only = True)
+    course_title = serializers.CharField(source = 'course.title', read_only = True)
+    class Meta:
+        model = Payment
+        fields = ['id','user','username', 'course','course_title','amount','order_id','payment_id','signature','status','created_at']
+        read_only_fields = ['id','username','course_title','created_at']
+
+class EnrollmentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source = 'user.username', read_only = True)
+    course_title = serializers.CharField(source = 'course.title' , read_only = True)
+
+    class Meta:
+        model = EnrollCourse
+        fields = ['user', 'username', 'course','course_title','progress','completed_topics','enrolled_at']
+        read_only_fields = ['username','course_title','enrolled_at','progress']
