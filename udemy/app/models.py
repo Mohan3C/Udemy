@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
-
-
 
 class Category(models.Model):
    name = models.CharField(max_length=100)
@@ -12,7 +9,7 @@ class Category(models.Model):
        return self.name
 
 class Course(models.Model):
-    category = models.ManyToManyField(Category,related_name='category', blank=True ) 
+    category = models.ForeignKey(Category,related_name='category', null=True, blank=True ,on_delete=models.CASCADE) 
     title = models.CharField(max_length=150)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
@@ -22,7 +19,6 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     language = models.CharField(max_length=50, default='English')
     published = models.BooleanField(default=False)
-    course_language = models.ManyToManyField("Programminglanguage", related_name='programming' , blank=True)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
