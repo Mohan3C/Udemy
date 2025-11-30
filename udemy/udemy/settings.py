@@ -23,9 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a2=!j+*z35ub_lgp8hiyxoq!z(=^k#4r@oqyxc5ny)k%kf31#b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "api.zxconline.com","127.0.0.1"
+]
 
 
 # Application definition
@@ -40,6 +42,13 @@ INSTALLED_APPS = [
     "rest_framework",
     "app"
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -116,9 +125,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+STATIC_URL = '/static/'
+STATIC_ROOT = '/home/zxconline-api/htdocs/api.zxconline.com/Udemy/udemy/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/home/zxconline-api/htdocs/api.zxconline.com/Udemy/udemy/media/'
