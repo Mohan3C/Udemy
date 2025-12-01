@@ -28,6 +28,11 @@ class Courseserializer(serializers.ModelSerializer):
         model=Course
         fields="__all__"
 
+class HomepageCourseserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id','title', 'image','price']
+
 class Topicserializer(serializers.ModelSerializer):
     class Meta:
         model=Topic

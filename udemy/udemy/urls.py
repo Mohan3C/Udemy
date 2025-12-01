@@ -22,8 +22,10 @@ urlpatterns = [
     path("api/login/",obtain_auth_token),
 
     # user created APIs 
+    path('api/', include(router.urls)),
+    path('', HomepageAPIView.as_view(), name= 'home'),
+    path('<int:pk>/', CourseDetailsAPIView.as_view(), name='course-details')
 
-    path('', include(router.urls)),
 
 
 
