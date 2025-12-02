@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from rest_framework import viewsets,filters
+from rest_framework import viewsets,filters, serializers
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 
 
 
@@ -22,23 +23,24 @@ class UserViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()] 
     
 
-class Categoryviewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+class CategoryViewset(viewsets.ModelViewSet):
     queryset=Category.objects.all()
     serializer_class=Categoryserializer
     search_fields=['name']
     filter_backends=[filters.SearchFilter]
 
-class Courseviewset(viewsets.ModelViewSet):
+class CourseViewset(viewsets.ModelViewSet):
+   # permission_classes = [IsAuthenticated]
     queryset=Course.objects.all()
-    serializer_class=Courseserializer
+    serializer_class=CourseSerializer
     search_fields=['title','description']
     filter_backends=[filters.SearchFilter]
 
+    
 
-class Topicviewset(viewsets.ModelViewSet):
+class TopicViewset(viewsets.ModelViewSet):
     queryset=Topic.objects.all()
-    serializer_class=Topicserializer
+    serializer_class=TopicSerializer
     search_fields=['course','content','title']
     filter_backends=[filters.SearchFilter]
 
@@ -54,12 +56,14 @@ class HomepageAPIView(APIView):
         return Response(
             {
                 "categories": Categoryserializer(categories, many=True).data,
-                "courses": HomepageCourseserializer(courses, many=True).data,
+                "courses": HomepageCourseSerializer(courses, many=True).data,
             })
 
-class CourseDetailsAPIView(APIView):
-    def get(self, request, pk):
-        courses = Course.objects.get(pk=pk)
+class CourseDetailsAPIView(RetrieveAPIView):
+    # def get(self, request, pk):
+    #     courses = Course.objects.get(pk=pk)
 
-        serializer = Courseserializer(courses)
-        return Response(serializer.data)
+    #     serializer = Coursedetailsserializer(courses)
+    #     return Response(serializer.data)
+    queryset = Course.objects.all()
+    serializer_class = CourseDetailSerializer
