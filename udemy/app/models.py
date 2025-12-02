@@ -12,6 +12,10 @@ class UserRole(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='role')
     role = models.CharField(max_length=50, choices=ROLES, default='student')
+    image = models.ImageField(upload_to="media/profile_picture/",blank=True,null=True)
+    name = models.CharField(max_length=250,blank=True,default="User")
+    bio = models.TextField(blank=True)
+    mobile_no = models.CharField(max_length=10,blank=True,default="9999999999")
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"

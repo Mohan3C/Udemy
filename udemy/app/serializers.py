@@ -2,15 +2,24 @@ from rest_framework import serializers,viewsets,routers
 from .models import *
 from django.contrib.auth.models import User
 
+class VerifyUserProfile(serializers.ModelSerializer):
+    class Meta:
+        model = UserRole
+        fields = "__all__"
+        extra_kwargs = {
+            "user":{"read_only":True}
+        }
 
 class UserSerializer(serializers.ModelSerializer):
+    role = VerifyUserProfile(read_only = True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'username', 'email', 'password','role']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    
 
 
 class UserRoleserializer(serializers.ModelSerializer):

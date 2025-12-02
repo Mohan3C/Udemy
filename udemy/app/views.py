@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.models import User
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 
 from .models import *
@@ -17,6 +19,10 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'create':      # only registration open
             return [AllowAny()]
         return [IsAuthenticated()] 
+    
+    @action(detail=False,methods=["get"])
+    def me(self,request):
+        return Response(UserSerializer(request.user).data)
     
 
 class Categoryviewset(viewsets.ModelViewSet):
