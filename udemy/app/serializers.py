@@ -37,9 +37,7 @@ class Categoryserializer(serializers.ModelSerializer):
         fields="__all__"
 
 class CourseSerializer(serializers.ModelSerializer):
-    author = UserRoleSerializer(read_only=True)
-    category = serializers.StringRelatedField(read_only=True)
-    
+    author=serializers.CharField(source='author.username',read_only=True)
     class Meta:
         model=Course
         fields= ['id','category','title','description','image','price','author','language']

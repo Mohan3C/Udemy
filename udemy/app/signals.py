@@ -5,7 +5,7 @@ from .models import UserRole
 
 
 @receiver(post_save,sender=User)
-def create_user_role(sernder,instance,created,**kwargs):
+def create_user_role(sender,instance,created,**kwargs):
     if created:
         UserRole.objects.create(user=instance,role="student")
 
