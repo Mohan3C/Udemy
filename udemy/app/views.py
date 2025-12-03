@@ -39,8 +39,16 @@ class Topicviewset(viewsets.ModelViewSet):
     search_fields=['course','content','title']
     filter_backends=[filters.SearchFilter]
 
-class Programminglangviewset(viewsets.ModelViewSet):
-    queryset=Programminglanguage.objects.all()
-    serializer_class=Programminglanguageserializer
+class SubCategoryViewSet(viewsets.ModelViewSet):
+    queryset=SubCategory.objects.all()
+    serializer_class=SubCategorySerializer
+
+class Enrollmentviewset(viewsets.ModelViewSet):
+    queryset =EnrollCourse.objects.all()
+    serializer_class = EnrollmentSerializer
+
+class Cartviewset(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
 
 

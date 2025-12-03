@@ -33,9 +33,9 @@ class Topicserializer(serializers.ModelSerializer):
         model=Topic
         fields="__all__"
 
-class Programminglanguageserializer(serializers.ModelSerializer):
+class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model=Programminglanguage
+        model=SubCategory
         fields="__all__"
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -54,3 +54,12 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         model = EnrollCourse
         fields = ['user', 'username', 'course','course_title','progress','completed_topics','enrolled_at']
         read_only_fields = ['username','course_title','enrolled_at','progress']
+
+class CartSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source='course.title',read_only = True)
+    course_price = serializers.IntegerField(source='course.price',read_only = True)
+
+    class Meta:
+        model = Cart
+        fields = ['user','course','course_title','course_price','added_at']
+        
