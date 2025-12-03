@@ -15,7 +15,7 @@ router.register(r'Course',CourseViewset)
 router.register(r'Topic',TopicViewset)
 router.register(r'SubCategory',SubCategoryViewSet)
 router.register(r'Cart',Cartviewset)
-router.register(r'EnrollCourse',Enrollmentviewset)
+router.register(r'EnrollCourse',EnrollCourseviewset)
 router.register(r'Payment',Paymentviewset)
 
 urlpatterns = [
