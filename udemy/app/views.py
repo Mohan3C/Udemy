@@ -30,13 +30,13 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(UserSerializer(request.user).data)
     
 
-class CategoryViewset(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     queryset=Category.objects.all()
     serializer_class=Categoryserializer
     search_fields=['name']
     filter_backends=[filters.SearchFilter]
 
-class CourseViewset(viewsets.ModelViewSet):
+class CourseViewSet(viewsets.ModelViewSet):
    # permission_classes = [IsAuthenticated]
     queryset=Course.objects.all()
     serializer_class=CourseSerializer
@@ -45,7 +45,7 @@ class CourseViewset(viewsets.ModelViewSet):
 
     
 
-class TopicViewset(viewsets.ModelViewSet):
+class TopicViewSet(viewsets.ModelViewSet):
     queryset=Topic.objects.all()
     serializer_class=TopicSerializer
     search_fields=['course','content','title']
@@ -56,12 +56,12 @@ class SubCategoryViewSet(viewsets.ModelViewSet):
     serializer_class=SubCategorySerializer
 
 
-class Paymentviewset(viewsets.ModelViewSet):
+class PaymentViewSet(viewsets.ModelViewSet):
     queryset=Payment.objects.all()
     serializer_class=PaymentSerializer
 
     
-class EnrollCourseviewset(viewsets.ModelViewSet):
+class EnrollCourseViewSet(viewsets.ModelViewSet):
     queryset=EnrollCourse.objects.all()
     serializer_class=EnrollmentSerializer
     permission_classes=[Isstudent]
@@ -81,7 +81,7 @@ class EnrollCourseviewset(viewsets.ModelViewSet):
     # filter_backends=[filters.SearchFilter]
 
 
-class Cartviewset(viewsets.ModelViewSet):
+class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
 

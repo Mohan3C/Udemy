@@ -10,13 +10,13 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 router=routers.DefaultRouter()
 router.register(r'User', UserViewSet)
-router.register(r'admin/category',CategoryViewset, basename='admincategory')
-router.register(r'Course',CourseViewset)
-router.register(r'Topic',TopicViewset)
-router.register(r'SubCategory',SubCategoryViewSet)
-router.register(r'Cart',Cartviewset)
-router.register(r'EnrollCourse',EnrollCourseviewset)
-router.register(r'Payment',Paymentviewset)
+router.register(r'admin/category',CategoryViewSet, basename='admincategory')
+router.register(r'course',CourseViewSet)
+router.register(r'topic',TopicViewSet)
+router.register(r'subCategory',SubCategoryViewSet)
+router.register(r'cart',CartViewSet)
+router.register(r'enrollCourse',EnrollCourseViewSet)
+router.register(r'payment',PaymentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
