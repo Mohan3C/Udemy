@@ -23,7 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a2=!j+*z35ub_lgp8hiyxoq!z(=^k#4r@oqyxc5ny)k%kf31#b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
+# i have to change this in live server
+
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "api.zxconline.com","127.0.0.1"
@@ -40,14 +43,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
-    "app"
+    "app.apps.AppCustomConfig",
+    "rest_framework.authtoken"
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
 
 
 MIDDLEWARE = [
@@ -133,7 +141,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/zxconline-api/htdocs/api.zxconline.com/Udemy/udemy/static/'
+
+# I have to change this in live server
+
+# STATIC_ROOT = '/home/zxconline-api/htdocs/api.zxconline.com/Udemy/udemy/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/zxconline-api/htdocs/api.zxconline.com/Udemy/udemy/media/'

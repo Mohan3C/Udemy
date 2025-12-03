@@ -1,36 +1,62 @@
 from rest_framework import serializers,viewsets,routers
 from .models import *
 from django.contrib.auth.models import User
+from rest_framework.generics import RetrieveAPIView
 
-class Userserializer(serializers.ModelSerializer):
-    username = serializers.CharField(source = "user.username", read_only = True)
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email']
-
-class UserRoleserializer(serializers.ModelSerializer):
+class VerifyUserProfile(serializers.ModelSerializer):
     class Meta:
         model = UserRole
-        fields = ['id', 'username', 'password', 'email', 'role']
+        fields = "__all__"
+        extra_kwargs = {
+            "user":{"read_only":True}
+        }
+
+class UserSerializer(serializers.ModelSerializer):
+
+    role = VerifyUserProfile(read_only = True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'password','role']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+    
+
+
+class UserRoleSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    class Meta:
+        model = UserRole
+        fields = ['id', 'username', 'role']
 
 class Categoryserializer(serializers.ModelSerializer):
     class Meta:
         model=Category
         fields="__all__"
 
-class Courseserializer(serializers.ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
+    author = UserRoleSerializer(read_only=True)
+    category = serializers.StringRelatedField(read_only=True)
+    
     class Meta:
         model=Course
-        fields="__all__"
+        fields= ['id','category','title','description','image','price','author','language']
 
-class Topicserializer(serializers.ModelSerializer):
+class HomepageCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id','title', 'image','price']
+
+class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model=Topic
         fields="__all__"
 
-class Programminglanguageserializer(serializers.ModelSerializer):
+class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model=Programminglanguage
+        model=SubCategory
         fields="__all__"
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -49,3 +75,21 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         model = EnrollCourse
         fields = ['user', 'username', 'course','course_title','progress','completed_topics','enrolled_at']
         read_only_fields = ['username','course_title','enrolled_at','progress']
+
+
+class CourseDetailSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    category = serializers.StringRelatedField()
+    class Meta:
+        model = Course
+        fields = ['id','title','description','category','author']
+
+class CartSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source='course.title',read_only = True)
+    course_price = serializers.IntegerField(source='course.price',read_only = True)
+
+    class Meta:
+        model = Cart
+        fields = ['user','course','course_title','course_price','added_at']
+        
+

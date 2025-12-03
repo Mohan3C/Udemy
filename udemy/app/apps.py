@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class AppConfig(AppConfig):
+class AppCustomConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'app'
 
@@ -9,3 +9,4 @@ class AppConfig(AppConfig):
         import app.signals
 
 #Django knows you are using that signal.
+
