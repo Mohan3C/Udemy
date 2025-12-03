@@ -126,7 +126,7 @@ class Coupon(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
-    coupon=models.ForeignKey(Coupon,null=True,blank=True)
+    coupon=models.ForeignKey(Coupon,null=True,blank=True,on_delete=models.CASCADE)
     is_paid=models.BooleanField(default=False)
 
     def __str__(self):
