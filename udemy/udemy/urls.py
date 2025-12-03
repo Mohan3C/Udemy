@@ -12,6 +12,9 @@ router.register(r'Category',Categoryviewset)
 router.register(r'Course',Courseviewset)
 router.register(r'Topic',Topicviewset)
 router.register(r'Programminglanguage',Programminglangviewset)
+router.register(r'Payment',Paymentviewset)
+router.register(r'EnrollCourse',EnrollCourseviewset)
+
 
 
 urlpatterns = [
