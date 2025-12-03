@@ -11,6 +11,8 @@ from rest_framework.decorators import action
 
 from .models import *
 from .serializers import *
+from .permissions import Isstudent
+from rest_framework import serializers
 
 
 # Create your views here.
@@ -28,13 +30,13 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(UserSerializer(request.user).data)
     
 
-class CategoryViewset(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     queryset=Category.objects.all()
     serializer_class=Categoryserializer
     search_fields=['name']
     filter_backends=[filters.SearchFilter]
 
-class CourseViewset(viewsets.ModelViewSet):
+class CourseViewSet(viewsets.ModelViewSet):
    # permission_classes = [IsAuthenticated]
     queryset=Course.objects.all()
     serializer_class=CourseSerializer
@@ -43,7 +45,7 @@ class CourseViewset(viewsets.ModelViewSet):
 
     
 
-class TopicViewset(viewsets.ModelViewSet):
+class TopicViewSet(viewsets.ModelViewSet):
     queryset=Topic.objects.all()
     serializer_class=TopicSerializer
     search_fields=['course','content','title']
@@ -53,11 +55,33 @@ class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset=SubCategory.objects.all()
     serializer_class=SubCategorySerializer
 
-class Enrollmentviewset(viewsets.ModelViewSet):
-    queryset =EnrollCourse.objects.all()
-    serializer_class = EnrollmentSerializer
 
-class Cartviewset(viewsets.ModelViewSet):
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset=Payment.objects.all()
+    serializer_class=PaymentSerializer
+
+    
+class EnrollCourseViewSet(viewsets.ModelViewSet):
+    queryset=EnrollCourse.objects.all()
+    serializer_class=EnrollmentSerializer
+    permission_classes=[Isstudent]
+    
+    def get_queryset(self):
+        return EnrollCourse.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        user=self.request.user
+        course=serializer.validated_data['course']
+
+        #prevent duplicate enrollment
+        if EnrollCourse.objects.filter(user=user,course=course).exists():
+            raise serializers.ValidationError("Already enrolled in this course")
+        serializers.save(user=user,progress=0,completed_topics=[])
+    # search_fields=['user_username','title']
+    # filter_backends=[filters.SearchFilter]
+
+
+class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
 

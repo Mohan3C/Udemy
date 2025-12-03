@@ -7,3 +7,6 @@ class AppCustomConfig(AppConfig):
 
     def ready(self):
         import app.signals
+
+#Django knows you are using that signal.
+
