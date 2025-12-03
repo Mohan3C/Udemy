@@ -25,25 +25,42 @@ class UserRole(models.Model):
 class Category(models.Model):
    name = models.CharField(max_length=100)
 
+
    def __str__(self):
        return self.name
+    
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(Category, null=True, blank=True ,on_delete=models.CASCADE) 
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
 
 class Course(models.Model):
     category = models.ForeignKey(Category,related_name='category', null=True, blank=True ,on_delete=models.CASCADE) 
+    subcategory = models.ForeignKey(SubCategory, null=True, blank=True ,on_delete=models.CASCADE) 
     title = models.CharField(max_length=150)
     description = models.TextField()
-    author = models.ForeignKey(UserRole, on_delete=models.CASCADE,null=True,blank=True)
-    image = models.ImageField(upload_to='media/')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
+    image = models.ImageField(upload_to='course_cover/')
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    discount_price = models.DecimalField(max_digits=6,decimal_places=2,null=True,blank=True)
     language = models.CharField(max_length=50, default='English')
     published = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
-    
+
+    def get_discount_price(self):
+            return (self.price -self.discount_price)/self.price*100
+
+        
+
 class Topic(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='topics')
     title = models.CharField(max_length=150)
@@ -53,14 +70,7 @@ class Topic(models.Model):
     def __str__(self):
         return self.title
 
-class Programminglanguage(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class Payment(models.Model):
+class Payment(models.Model): 
    
     STATUS_CHOICES = (
         ("pending", "Pending"),
@@ -106,4 +116,12 @@ class EnrollCourse(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.course.title}"
     
+
+class Cart(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    course = models.ForeignKey(Course,on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} -{self.course.title}"
     
