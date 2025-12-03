@@ -28,7 +28,7 @@ class Course(models.Model):
     category = models.ForeignKey(Category,related_name='category', null=True, blank=True ,on_delete=models.CASCADE) 
     title = models.CharField(max_length=150)
     description = models.TextField()
-    author = models.ForeignKey(UserRole, on_delete=models.CASCADE,null=True,blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
     image = models.ImageField(upload_to='media/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)

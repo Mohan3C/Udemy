@@ -48,22 +48,18 @@ class Programminglangviewset(viewsets.ModelViewSet):
     queryset=Programminglanguage.objects.all()
     serializer_class=Programminglanguageserializer
 
-class HomepageAPIView(APIView):
-    def get(self, request):
-        categories = Category.objects.all()
-        courses = Course.objects.all()
+# class HomepageAPIView(APIView):
+#     def get(self, request):
+#         categories = Category.objects.all()
+#         courses = Course.objects.all()
 
-        return Response(
-            {
-                "categories": Categoryserializer(categories, many=True).data,
-                "courses": HomepageCourseSerializer(courses, many=True).data,
-            })
+#         return Response(
+#             {
+#                 "categories": Categoryserializer(categories, many=True).data,
+#                 "courses": HomepageCourseSerializer(courses, many=True).data,
+#             })
 
-class CourseDetailsAPIView(RetrieveAPIView):
-    # def get(self, request, pk):
-    #     courses = Course.objects.get(pk=pk)
-
-    #     serializer = Coursedetailsserializer(courses)
-    #     return Response(serializer.data)
-    queryset = Course.objects.all()
-    serializer_class = CourseDetailSerializer
+# class CourseDetailsAPIView(RetrieveAPIView):
+    
+#     queryset = Course.objects.all()
+#     serializer_class = CourseDetailSerializer

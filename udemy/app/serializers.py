@@ -27,17 +27,21 @@ class Categoryserializer(serializers.ModelSerializer):
         fields="__all__"
 
 class CourseSerializer(serializers.ModelSerializer):
-    author = UserRoleSerializer(read_only=True)
-    category = serializers.StringRelatedField(read_only=True)
-    
     class Meta:
         model=Course
-        fields= ['id','category','title','description','image','price','author','language']
+        fields= ['id','title','description','image','price','author','category','language']
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['author'] = UserSerializer(instance.author).data
+        rep['category'] = Categoryserializer(instance.category).data
+        return rep
+    
 
-class HomepageCourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ['id','title', 'image','price']
+# class HomepageCourseSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Course
+#         fields = ['id','title', 'image','price']
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,9 +70,13 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         fields = ['user', 'username', 'course','course_title','progress','completed_topics','enrolled_at']
         read_only_fields = ['username','course_title','enrolled_at','progress']
 
-class CourseDetailSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField()
-    category = serializers.StringRelatedField()
-    class Meta:
-        model = Course
-        fields = ['id','title','description','category','author']
+# class CourseDetailSerializer(serializers.ModelSerializer):
+#     category = serializers.StringRelatedField()
+#     class Meta:
+#         model = Course
+#         fields = ['id','title','description','category','author','user']
+
+#     def to_representation(self, instance):
+#         representation = super().to_representation(instance)
+#         representation['category'] = Categoryserializer(instance.category).data
+#         return representation
