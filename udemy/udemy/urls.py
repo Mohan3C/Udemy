@@ -25,8 +25,8 @@ urlpatterns = [
 
     # user created APIs 
     path('api/', include(router.urls)),
-    path('', HomepageAPIView.as_view(), name= 'home'),
-    path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details')
+    #path('', HomepageAPIView.as_view(), name= 'home'),
+    #path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details')
 
 
 
