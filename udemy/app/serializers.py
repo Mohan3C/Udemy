@@ -37,9 +37,7 @@ class Categoryserializer(serializers.ModelSerializer):
         fields="__all__"
 
 class CourseSerializer(serializers.ModelSerializer):
-    author = UserRoleSerializer(read_only=True)
-    category = serializers.StringRelatedField(read_only=True)
-    
+    author=serializers.CharField(source='author.username',read_only=True)
     class Meta:
         model=Course
         fields= ['id','category','title','description','image','price','author','language']
@@ -91,5 +89,14 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['user','course','course_title','course_price','added_at']
+
+class Cartitemserializer(serializers.ModelSerializer):
+    course_title=serializers.CharField(source="course.title",read_only=True)
+
+    class Meta:
+        model=Cartitem
+        fields=['id','cart','course','course_title','added_at']
+        read_only_fields=['cart']
+
         
 
