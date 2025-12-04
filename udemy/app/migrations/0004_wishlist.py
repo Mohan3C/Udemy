@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0002_coupon_remove_cart_course_cart_is_paid_cartitem_and_more'),
+        ('app', '0003_notification'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
