@@ -37,15 +37,23 @@ class Categoryserializer(serializers.ModelSerializer):
         fields="__all__"
 
 class CourseSerializer(serializers.ModelSerializer):
-    author=serializers.CharField(source='author.username',read_only=True)
+
     class Meta:
         model=Course
-        fields= ['id','category','title','description','image','price','author','language']
+        fields= ['id','title','description','image','price','author','category','language']
+        read_only_fields = ['author']
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['author'] = UserSerializer(instance.author).data
+        rep['category'] = Categoryserializer(instance.category).data
+        return rep
+    
 
-class HomepageCourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ['id','title', 'image','price']
+# class HomepageCourseSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Course
+#         fields = ['id','title', 'image','price']
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,6 +83,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         read_only_fields = ['username','course_title','enrolled_at','progress']
 
 
+
 class CourseDetailSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
@@ -98,5 +107,28 @@ class Cartitemserializer(serializers.ModelSerializer):
         fields=['id','cart','course','course_title','added_at']
         read_only_fields=['cart']
 
-        
+class Wishlistserializer(serializers.ModelSerializer):
+    course_title=serializers.CharField(source="course.title",read_only=True)
 
+    class Meta:
+        model=Wishlist
+        fields=["id","user","course","course_title"]
+        read_only_fields=["user"]
+
+        
+# class CourseDetailSerializer(serializers.ModelSerializer):
+#     category = serializers.StringRelatedField()
+#     class Meta:
+#         model = Course
+#         fields = ['id','title','description','category','author','user']
+
+#     def to_representation(self, instance):
+#         representation = super().to_representation(instance)
+#         representation['category'] = Categoryserializer(instance.category).data
+#         return representation
+
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = "__all__"
