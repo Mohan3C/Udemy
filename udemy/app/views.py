@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets,filters, serializers
+from rest_framework import viewsets,filters, serializers,permissions
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -24,6 +24,18 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'create':      # only registration open
             return [AllowAny()]
         return [IsAuthenticated()] 
+    
+    def perform_create(self, serializer):
+        user = serializer.save()
+
+        title = f"welcome, {user.username}"
+        message = """Welcome to our platform!
+                We’re glad to have you here. Your account is now ready, and you can start exploring all features right away.
+                If you ever need help, our support team is always here for you.
+                Enjoy your journey with us! """
+
+        create_notification(user,title,message)
+
     
     @action(detail=False,methods=["get"])
     def me(self,request):
@@ -96,7 +108,35 @@ class CartViewSet(viewsets.ModelViewSet):
 #                 "courses": HomepageCourseSerializer(courses, many=True).data,
 #             })
 
-# class CourseDetailsAPIView(RetrieveAPIView):
+
+
+class CourseDetailsAPIView(RetrieveAPIView):
+    # def get(self, request, pk):
+    #     courses = Course.objects.get(pk=pk)
+
+    #     serializer = Coursedetailsserializer(courses)
+    #     return Response(serializer.data)
+    queryset = Course.objects.all()
+    serializer_class = CourseDetailSerializer
+
+class notificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
-#     queryset = Course.objects.all()
-#     serializer_class = CourseDetailSerializer
+    def get_queryset(self):
+        notification = Notification.objects.filter(user=self.request.user).order_by("-created_at")
+        return notification
+    
+    def mark_read(self,request,pk=None):
+        notification = self.get_object()
+        notification.is_read = True 
+        notification.save()
+
+        return Response({"status":"read"},status=status.HTTP_200_OK)
+    
+
+def create_notification(user,title,message):
+    if user.is_anonymous:
+        return
+    Notification.objects.create(user=user,title=title,message=message)
+

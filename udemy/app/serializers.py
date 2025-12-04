@@ -118,3 +118,8 @@ class Cartitemserializer(serializers.ModelSerializer):
 #         representation['category'] = Categoryserializer(instance.category).data
 #         return representation
 
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = "__all__"
