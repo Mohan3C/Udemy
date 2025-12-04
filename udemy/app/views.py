@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.decorators import action
-
+from rest_framework.authentication import TokenAuthentication
 
 
 from .models import *
@@ -104,3 +104,25 @@ class CourseDetailsAPIView(RetrieveAPIView):
     #     return Response(serializer.data)
     queryset = Course.objects.all()
     serializer_class = CourseDetailSerializer
+
+class WishlistViewSet(viewsets.ModelViewSet):
+    queryset=Wishlist.objects.all()
+    serializer_class=Wishlistserializer
+    permission_classes=[IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        user=self.request.user
+        course=serializer.validated_data["course"]
+
+        if Wishlist.objects.filter(user=user, course=course).exists():
+            raise serializers.ValidationError("Course already in wishlist.")
+        
+        if EnrollCourse.objects.filter(user=user, course=course).exists():
+            raise serializers.ValidationError("You are already enrolled in this course.")
+        
+        serializer.save(user=user)
+        

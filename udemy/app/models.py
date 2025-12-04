@@ -141,6 +141,17 @@ class Cartitem(models.Model):
     def __str__(self):
         return self.course.title
 
+class Wishlist(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="wishlist_items")
+    course=models.ForeignKey(Course,on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together=("user","course")
+
+    def __str__(self):
+        return self.course.title
+
+
 
     
 
