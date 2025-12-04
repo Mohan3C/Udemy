@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
+from .permissions import IsTeacher
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
@@ -28,14 +30,33 @@ class CategoryViewset(viewsets.ModelViewSet):
     serializer_class=Categoryserializer
     search_fields=['name']
     filter_backends=[filters.SearchFilter]
+    
+    def get_permissions(self):
+        if self.action in['create','update','destroy']:
+            return [IsAuthenticated(), IsTeacher()]
+        return [IsAuthenticated()]
 
 class CourseViewset(viewsets.ModelViewSet):
-   # permission_classes = [IsAuthenticated]
     queryset=Course.objects.all()
     serializer_class=CourseSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'teacher':
+            return Course.objects.filter(teacher=user)
+        return Course.objects.all()
+
     search_fields=['title','description']
     filter_backends=[filters.SearchFilter]
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def get_permissions(self):
+        if self.action in['create','update','destroy']:
+            return[IsAuthenticated(), IsTeacher()]
+        return [IsAuthenticated()]
     
 
 class TopicViewset(viewsets.ModelViewSet):
