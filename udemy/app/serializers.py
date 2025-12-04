@@ -31,16 +31,22 @@ class UserRoleSerializer(serializers.ModelSerializer):
         model = UserRole
         fields = ['id', 'username', 'role']
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=SubCategory
+        fields="__all__"
+
 class Categoryserializer(serializers.ModelSerializer):
+    subcategory = SubCategorySerializer(many=True, read_only=True)
     class Meta:
         model=Category
-        fields="__all__"
+        fields=['id','name','subcategory']
 
 class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Course
-        fields= ['id','title','description','image','price','author','category','language']
+        fields= ['id','title','description','image','price','author','category','subcategory','language']
         read_only_fields = ['author']
     
     def to_representation(self, instance):
@@ -60,10 +66,7 @@ class TopicSerializer(serializers.ModelSerializer):
         model=Topic
         fields="__all__"
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model=SubCategory
-        fields="__all__"
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source = "user.username", read_only = True)
