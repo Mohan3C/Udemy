@@ -17,7 +17,11 @@ router.register(r'subCategory',SubCategoryViewSet)
 router.register(r'cart',CartViewSet)
 router.register(r'enrollCourse',EnrollCourseViewSet)
 router.register(r'payment',PaymentViewSet)
+
 router.register(r'notification',notificationViewSet,basename="notification")
+
+router.register(r'wishlist',WishlistViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,8 +30,8 @@ urlpatterns = [
 
     # user created APIs 
     path('api/', include(router.urls)),
-    #path('', HomepageAPIView.as_view(), name= 'home'),
-    #path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details')
+    path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details'),
+
 
 
 

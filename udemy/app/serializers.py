@@ -106,6 +106,14 @@ class Cartitemserializer(serializers.ModelSerializer):
         fields=['id','cart','course','course_title','added_at']
         read_only_fields=['cart']
 
+class Wishlistserializer(serializers.ModelSerializer):
+    course_title=serializers.CharField(source="course.title",read_only=True)
+
+    class Meta:
+        model=Wishlist
+        fields=["id","user","course","course_title"]
+        read_only_fields=["user"]
+
         
 # class CourseDetailSerializer(serializers.ModelSerializer):
 #     category = serializers.StringRelatedField()
