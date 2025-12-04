@@ -17,6 +17,7 @@ router.register(r'subCategory',SubCategoryViewSet)
 router.register(r'cart',CartViewSet)
 router.register(r'enrollCourse',EnrollCourseViewSet)
 router.register(r'payment',PaymentViewSet)
+router.register(r'notification',notificationViewSet,basename="notification")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
