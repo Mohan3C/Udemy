@@ -7,12 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication
-
-
+from .permissions import IsTeacher, Isstudent
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import *
 from .serializers import *
-from .permissions import Isstudent
-from rest_framework import serializers
+
+
 
 
 # Create your views here.
@@ -47,14 +47,37 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class=Categoryserializer
     search_fields=['name']
     filter_backends=[filters.SearchFilter]
+    
+    def get_permissions(self):
+        if self.action in['create','update','destroy']:
+            return [IsAuthenticated(), IsTeacher()]
+        return [IsAuthenticated()]
 
-class CourseViewSet(viewsets.ModelViewSet):
-   # permission_classes = [IsAuthenticated]
+
+
+
+class CourseViewset(viewsets.ModelViewSet):
+
     queryset=Course.objects.all()
     serializer_class=CourseSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'teacher':
+            return Course.objects.filter(teacher=user)
+        return Course.objects.all()
+
     search_fields=['title','description']
     filter_backends=[filters.SearchFilter]
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def get_permissions(self):
+        if self.action in['create','update','destroy']:
+            return[IsAuthenticated(), IsTeacher()]
+        return [IsAuthenticated()]
     
 
 class TopicViewSet(viewsets.ModelViewSet):
