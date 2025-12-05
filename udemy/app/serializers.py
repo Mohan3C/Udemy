@@ -12,9 +12,7 @@ class VerifyUserProfile(serializers.ModelSerializer):
         }
 
 class UserSerializer(serializers.ModelSerializer):
-
     role = VerifyUserProfile(read_only = True)
-    
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password','role']
@@ -22,6 +20,23 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    
+class TeacherSerializer(serializers.ModelSerializer):
+    role = VerifyUserProfile(read_only = True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'password','role']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username= validated_data['username'],
+            email= validated_data.get('email'),
+            password= validated_data['password']
+        )
+        UserRole.objects.update_or_create(user=user, defaults={'role':'teacher'})
+        
+        return user
     
 
 
@@ -31,16 +46,22 @@ class UserRoleSerializer(serializers.ModelSerializer):
         model = UserRole
         fields = ['id', 'username', 'role']
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=SubCategory
+        fields="__all__"
+
 class Categoryserializer(serializers.ModelSerializer):
+    subcategory = SubCategorySerializer(many=True, read_only=True)
     class Meta:
         model=Category
-        fields="__all__"
+        fields=['id','name','subcategory']
 
 class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Course
-        fields= ['id','title','description','image','price','author','category','language']
+        fields= ['id','title','description','image','price','author','category','subcategory','language']
         read_only_fields = ['author']
     
     def to_representation(self, instance):
@@ -60,10 +81,7 @@ class TopicSerializer(serializers.ModelSerializer):
         model=Topic
         fields="__all__"
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model=SubCategory
-        fields="__all__"
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source = "user.username", read_only = True)

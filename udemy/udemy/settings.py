@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-a2=!j+*z35ub_lgp8hiyxoq!z(=^k#4r@oqyxc5ny)k%kf31#b
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "api.zxconline.com","127.0.0.1"
+    "api.zxconline.com","127.0.0.1","192.168.29.233"
 ]
 
 
