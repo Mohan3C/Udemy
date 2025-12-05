@@ -10,12 +10,17 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 router=routers.DefaultRouter()
 router.register(r'User', UserViewSet)
-router.register(r'Category',Categoryviewset)
-router.register(r'Course',Courseviewset)
-router.register(r'Topic',Topicviewset)
-router.register(r'SubCategory',SubCategoryViewSet)
-router.register(r'Cart',Cartviewset)
-router.register(r'EnrollCourse',Enrollmentviewset)
+router.register(r'admin/category',CategoryViewSet, basename='admincategory')
+router.register(r'course',CourseViewset)
+router.register(r'topic',TopicViewSet)
+router.register(r'subCategory',SubCategoryViewSet)
+router.register(r'cart',CartViewSet)
+router.register(r'enrollCourse',EnrollCourseViewSet)
+router.register(r'payment',PaymentViewSet)
+
+router.register(r'notification',notificationViewSet,basename="notification")
+
+router.register(r'wishlist',WishlistViewSet)
 
 
 urlpatterns = [
@@ -24,8 +29,10 @@ urlpatterns = [
     path("api/login/",obtain_auth_token),
 
     # user created APIs 
+    path('api/', include(router.urls)),
+    path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details'),
 
-    path('', include(router.urls)),
+
 
 
 

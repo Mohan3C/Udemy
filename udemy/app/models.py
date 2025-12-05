@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
 
 
@@ -13,6 +13,10 @@ class UserRole(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='role')
     role = models.CharField(max_length=50, choices=ROLES, default='student')
+    image = models.ImageField(upload_to="media/profile_picture/",blank=True,null=True)
+    name = models.CharField(max_length=250,blank=True,default="User")
+    bio = models.TextField(blank=True)
+    mobile_no = models.CharField(max_length=10,blank=True,default="9999999999")
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"
@@ -40,7 +44,9 @@ class Course(models.Model):
     title = models.CharField(max_length=150)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
+
     image = models.ImageField(upload_to='course_cover/')
+
     price = models.DecimalField(max_digits=6, decimal_places=2)
     discount_price = models.DecimalField(max_digits=6,decimal_places=2,null=True,blank=True)
     language = models.CharField(max_length=50, default='English')
@@ -112,12 +118,57 @@ class EnrollCourse(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.course.title}"
     
-
-class Cart(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    course = models.ForeignKey(Course,on_delete=models.CASCADE)
-    added_at = models.DateTimeField(auto_now_add=True)
+class Coupon(models.Model):
+    code=models.CharField(max_length=200)
+    amount=models.DecimalField(max_digits=7,decimal_places=2)
 
     def __str__(self):
-        return f"{self.user.username} -{self.course.title}"
+        return self.code
+    
+class Cart(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+    coupon=models.ForeignKey(Coupon,null=True,blank=True,on_delete=models.CASCADE)
+    is_paid=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+    
+class Cartitem(models.Model):
+    cart=models.ForeignKey(Cart,on_delete=models.CASCADE,related_name="items")
+    course=models.ForeignKey(Course,on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+       
+
+    def __str__(self):
+        return self.course.title
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="notification")
+    title = models.CharField(max_length=300)
+    message = models.TextField(blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}-{self.title}"
+    
+
+class Wishlist(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="wishlist_items")
+    course=models.ForeignKey(Course,on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together=("user","course")
+
+    def __str__(self):
+        return self.course.title
+
+
+
+
+    
+
+
     
