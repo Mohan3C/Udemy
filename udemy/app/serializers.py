@@ -12,9 +12,7 @@ class VerifyUserProfile(serializers.ModelSerializer):
         }
 
 class UserSerializer(serializers.ModelSerializer):
-
     role = VerifyUserProfile(read_only = True)
-    
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password','role']
@@ -22,6 +20,23 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    
+class TeacherSerializer(serializers.ModelSerializer):
+    role = VerifyUserProfile(read_only = True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'password','role']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username= validated_data['username'],
+            email= validated_data.get('email'),
+            password= validated_data['password']
+        )
+        UserRole.objects.update_or_create(user=user, defaults={'role':'teacher'})
+        
+        return user
     
 
 

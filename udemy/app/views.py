@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets,filters, serializers,permissions
+from rest_framework import viewsets,filters, serializers,permissions, status
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -40,7 +40,27 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["get"])
     def me(self,request):
         return Response(UserSerializer(request.user).data)
-    
+
+class TeacherViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(role__role='teacher')
+    serializer_class = UserSerializer
+    def create(self, request):
+        serializer = TeacherSerializer(data=request.data)
+
+        if serializer.is_valid():
+            teacher = serializer.save()
+            return Response(
+                {
+                    "message":"Teacher registered successfully",
+                    "teacher_id": teacher.id,
+                    "teacher_name": teacher.username,
+                    "Role" : teacher.role
+                },
+            status=status.HTTP_201_CREATED
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+       
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset=Category.objects.all()
