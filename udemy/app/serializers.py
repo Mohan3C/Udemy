@@ -115,7 +115,7 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ['user','course','course_title','course_price','added_at']
+        fields = ['user','course_title','course_price','added_at']
 
 class Cartitemserializer(serializers.ModelSerializer):
     course_title=serializers.CharField(source="course.title",read_only=True)
