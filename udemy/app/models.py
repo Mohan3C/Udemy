@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 
-
-
 # Create your models here.
 
 class UserRole(models.Model):
@@ -29,24 +27,12 @@ class Category(models.Model):
    def __str__(self):
        return self.name
     
-
-class SubCategory(models.Model):
-    category = models.ForeignKey(Category, related_name="subcategory", null=True, blank=True ,on_delete=models.CASCADE) 
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-    
-
 class Course(models.Model):
     category = models.ForeignKey(Category,related_name='category', null=True, blank=True ,on_delete=models.CASCADE) 
-    # subcategory = models.ForeignKey(SubCategory, null=True, blank=True ,on_delete=models.CASCADE) 
     title = models.CharField(max_length=150)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
-
     image = models.ImageField(upload_to='course_cover/')
-
     price = models.DecimalField(max_digits=6, decimal_places=2)
     discount_price = models.DecimalField(max_digits=6,decimal_places=2,null=True,blank=True)
     language = models.CharField(max_length=50, default='English')
@@ -64,13 +50,13 @@ class Course(models.Model):
         
 
 class Topic(models.Model):
-    CONTENT_TYPE = [
+    TOPIC_TYPE = [
         ('text', 'text'),
         ('video', 'video')
     ]
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='topics')
     title = models.CharField(max_length=150)
-    content_type = models.CharField(max_length=10, choices=CONTENT_TYPE, default='text')
+    topic_type = models.CharField(max_length=10, choices=TOPIC_TYPE, default='text')
     content = models.TextField(blank=True, null=True)
     video = models.FileField(upload_to="topic_video/", null=True, blank=True)
 

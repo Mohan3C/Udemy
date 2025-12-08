@@ -39,29 +39,23 @@ class TeacherSerializer(serializers.ModelSerializer):
         return user
     
 
-
 class UserRoleSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = UserRole
         fields = ['id', 'username', 'role']
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model=SubCategory
-        fields="__all__"
-
 class Categoryserializer(serializers.ModelSerializer):
-    subcategory = SubCategorySerializer(many=True, read_only=True)
+    
     class Meta:
         model=Category
-        fields=['id','name','subcategory']
+        fields=['id','name']
 
 class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Course
-        fields= ['id','title','description','image','price','author','category','subcategory','language']
+        fields= ['id','title','description','image','price','discount_price','author','category','language']
         read_only_fields = ['author']
     
     def to_representation(self, instance):
@@ -69,12 +63,6 @@ class CourseSerializer(serializers.ModelSerializer):
         rep['author'] = UserSerializer(instance.author).data
         rep['category'] = Categoryserializer(instance.category).data
         return rep
-    
-
-# class HomepageCourseSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Course
-#         fields = ['id','title', 'image','price']
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -82,23 +70,23 @@ class TopicSerializer(serializers.ModelSerializer):
         fields= "__all__"
 
     def validate(self, data):
-        content_type = data.get('content_type')
-        if isinstance(content_type, str):
-            content_type = content_type.strip('"').strip("'")
-            data['content_type'] = content_type.lower()
+        topic_type = data.get('topic_type')
+        if isinstance(topic_type, str):
+            topic_type = topic_type.strip('"').strip("'")
+            data['topic_type'] = topic_type.lower()
         content = data.get('content')
         video = data.get('video')
 
-        if content_type == 'text':
+        if topic_type == 'text':
             if not content or content.strip() == '':
                 raise serializers.ValidationError("only insert text")
             data['video'] = None
-        elif content_type == 'video':
+        elif topic_type == 'video':
             if not video:
                 raise serializers.ValidationError("only insert video file")
             data['content'] = None
         else:
-            raise serializers.ValidationError("invalied content_type")
+            raise serializers.ValidationError("invalied topic_type")
         return data
 
 
@@ -118,8 +106,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         model = EnrollCourse
         fields = ['user', 'username', 'course','course_title','progress','completed_topics','enrolled_at']
         read_only_fields = ['username','course_title','enrolled_at','progress']
-
-
 
 class CourseDetailSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
@@ -152,17 +138,6 @@ class Wishlistserializer(serializers.ModelSerializer):
         fields=["id","user","course","course_title"]
         read_only_fields=["user"]
 
-        
-# class CourseDetailSerializer(serializers.ModelSerializer):
-#     category = serializers.StringRelatedField()
-#     class Meta:
-#         model = Course
-#         fields = ['id','title','description','category','author','user']
-
-#     def to_representation(self, instance):
-#         representation = super().to_representation(instance)
-#         representation['category'] = Categoryserializer(instance.category).data
-#         return representation
 
 class NotificationSerializer(serializers.ModelSerializer):
 

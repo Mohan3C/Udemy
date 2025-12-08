@@ -11,11 +11,10 @@ from rest_framework.authtoken.views import obtain_auth_token
 router=routers.DefaultRouter()
 router.register(r'User', UserViewSet)
 router.register(r"teacher/register", TeacherViewSet, basename= "teacher")
-router.register(r'admin/category',CategoryViewSet, basename='admincategory')
+router.register(r'category',CategoryViewSet, basename='admincategory')
 router.register(r'course',CourseViewset)
 router.register(r'topic',TopicViewSet)
-router.register(r'subCategory',SubCategoryViewSet)
-#router.register(r'cart',CartViewSet)
+
 router.register(r'enrollCourse',EnrollCourseViewSet)
 router.register(r'payment',PaymentViewSet)
 
