@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<button id="pay">Pay Now</button>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+// 1️⃣ CALL BACKEND TO CREATE ORDER
+fetch("http://127.0.0.1:8000/api/payment", {
+    method: "POST",
+    headers: {
+        "Authorization": "token f38bdd471a95586dbc532e8ed25742f4970e2dae",
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ course_id: 1 })
+})
+.then(res => res.json())
+.then(data => {
+
+    console.log("ORDER RESPONSE:", data);
+
+    // 2️⃣ PREPARE RAZORPAY CHECKOUT OPTIONS
+    let options = {
+        "key": "rzp_test_RJKzOMnn4i4LG0",    // your test key
+        "order_id": data.gateway_order_id,
+        "amount": data.amount * 100,
+        "currency": "INR",
+
+        // 3️⃣ RAZORPAY SENDS PAYMENT DETAILS HERE
+        "handler": function (response) {
+
+            console.log("RAZORPAY RESPONSE:", response);
+
+            // 4️⃣ SEND DETAILS TO BACKEND VERIFY API
+
+            fetch("http://127.0.0.1:8000/api/payment/", {
+                method: "POST",
+                headers: {
+                    "Authorization": "token f38bdd471a95586dbc532e8ed25742f4970e2dae",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(response)
+            })
+            .then(res => res.json())
+            .then(console.log);
+        }
+    };
+
+    // 5️⃣ OPEN CHECKOUT WHEN BUTTON CLICKED
+    document.getElementById("pay").onclick = function () {
+        let razorpay = new Razorpay(options);
+        razorpay.open();
+    };
+});
+</script>
+
+</body>
+</html>

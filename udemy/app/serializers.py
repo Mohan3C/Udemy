@@ -89,6 +89,12 @@ class TopicSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("invalied topic_type")
         return data
 
+class PurchasedSerializer(serializers.ModelSerializer):
+    course = CourseSerializer(read_only=True)
+    class Meta:
+        model = Order
+        fields = ['id','course','gatway_order_id','amount','status']
+        read_only_fields = ['gatway_order_id','status']
 
 class PaymentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source = "user.username", read_only = True)

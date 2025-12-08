@@ -9,7 +9,7 @@ class UserRole(models.Model):
         ('teacher', 'teacher'),
         ('admin', 'admin')
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='role')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='role')
     role = models.CharField(max_length=50, choices=ROLES, default='student')
     image = models.ImageField(upload_to="media/profile_picture/",blank=True,null=True)
     name = models.CharField(max_length=250,blank=True,default="User")
@@ -62,30 +62,42 @@ class Topic(models.Model):
 
 
     def __str__(self):
-        return f"{self.title} ({self.content_type})"
+        return f"{self.title} ({self.topic_type})"
+    
+class Order(models.Model):
+    STATUS = [
+        ("pending","pending"),
+        ("paid","paid"),
+        ("cancelled","cancelled"),    
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='courses')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    gatway_order_id = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS, default='pending')
+    def __str__(self):
+        return f"Order {self.id}"
+
 
 class Payment(models.Model): 
    
     STATUS_CHOICES = (
-        ("pending", "Pending"),
-        ("success", "Success"),
-        ("failed", "Failed"),
-        ("refunded", "Refunded"),
+        ("create", "create"),
+        ("success", "success"),
+        ("failed", "failed"),
+        ("refunded", "refunded"),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='payments')
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
 # recive payments details after enrolled course
-    order_id = models.CharField(max_length=200, blank=True, null=True)
-    payment_id = models.CharField(max_length=200, blank=True, null=True)
-    signature = models.CharField(max_length=200, blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    razorpay_order_id = models.CharField(max_length=200, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=200, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=200, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='create')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.username}- {self.course} - {self.status}"
+        return self.order_id
     
 class EnrollCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

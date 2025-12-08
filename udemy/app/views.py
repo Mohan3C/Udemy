@@ -99,6 +99,14 @@ class TopicViewSet(viewsets.ModelViewSet):
     search_fields=['course','content','title']
     filter_backends=[filters.SearchFilter]
 
+class PurchsedViewSet(viewsets.ModelViewSet):
+    
+    serializer_class = PurchasedSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
+
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset=Payment.objects.all()
     serializer_class=PaymentSerializer
