@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets,filters, serializers,permissions, status
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.models import User
@@ -136,9 +136,9 @@ class EnrollCourseViewSet(viewsets.ModelViewSet):
     # filter_backends=[filters.SearchFilter]
 
 
-class CartViewSet(viewsets.ModelViewSet):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+# class CartViewSet(viewsets.ModelViewSet):
+#     queryset = Cart.objects.all()
+#     serializer_class = CartSerializer
 
 # class HomepageAPIView(APIView):
 #     def get(self, request):
@@ -207,3 +207,22 @@ class WishlistViewSet(viewsets.ModelViewSet):
         serializer.save(user=user)
         
 
+class AddToCartAPIView(APIView):
+    def post(self, request):
+        user = request.user
+        course_id = request.data.get('course_id')
+
+        if not course_id:
+            return Response ({"error":"Course Id is required"},status=status.HTTP_400_BAD_REQUEST)
+        
+        course = get_object_or_404(Course, id=course_id)
+
+        cart,_ = Cart.objects.get_or_create(user=user)
+
+        if Cartitem.objects.filter(cart=cart, course= course).exists():
+            return Response({"error":"Course already exist "})
+
+        cart_item = Cartitem.objects.create(cart=cart, course=course)
+
+        serializer = Cartitemserializer(cart_item)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

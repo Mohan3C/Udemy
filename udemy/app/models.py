@@ -40,7 +40,7 @@ class SubCategory(models.Model):
 
 class Course(models.Model):
     category = models.ForeignKey(Category,related_name='category', null=True, blank=True ,on_delete=models.CASCADE) 
-    subcategory = models.ForeignKey(SubCategory, null=True, blank=True ,on_delete=models.CASCADE) 
+    # subcategory = models.ForeignKey(SubCategory, null=True, blank=True ,on_delete=models.CASCADE) 
     title = models.CharField(max_length=150)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
@@ -64,13 +64,19 @@ class Course(models.Model):
         
 
 class Topic(models.Model):
+    CONTENT_TYPE = [
+        ('text', 'text'),
+        ('video', 'video')
+    ]
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='topics')
     title = models.CharField(max_length=150)
-    content = models.TextField()
+    content_type = models.CharField(max_length=10, choices=CONTENT_TYPE, default='text')
+    content = models.TextField(blank=True, null=True)
+    video = models.FileField(upload_to="topic_video/", null=True, blank=True)
 
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.content_type})"
 
 class Payment(models.Model): 
    

@@ -15,7 +15,7 @@ router.register(r'admin/category',CategoryViewSet, basename='admincategory')
 router.register(r'course',CourseViewset)
 router.register(r'topic',TopicViewSet)
 router.register(r'subCategory',SubCategoryViewSet)
-router.register(r'cart',CartViewSet)
+#router.register(r'cart',CartViewSet)
 router.register(r'enrollCourse',EnrollCourseViewSet)
 router.register(r'payment',PaymentViewSet)
 
@@ -32,6 +32,7 @@ urlpatterns = [
     # user created APIs 
     path('api/', include(router.urls)),
     path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details'),
+    path('api/addtocart/', AddToCartAPIView.as_view(), name="add-to-cart"),
 
 
 

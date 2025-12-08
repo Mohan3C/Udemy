@@ -79,8 +79,27 @@ class CourseSerializer(serializers.ModelSerializer):
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model=Topic
-        fields="__all__"
+        fields= "__all__"
 
+    def validate(self, data):
+        content_type = data.get('content_type')
+        if isinstance(content_type, str):
+            content_type = content_type.strip('"').strip("'")
+            data['content_type'] = content_type.lower()
+        content = data.get('content')
+        video = data.get('video')
+
+        if content_type == 'text':
+            if not content or content.strip() == '':
+                raise serializers.ValidationError("only insert text")
+            data['video'] = None
+        elif content_type == 'video':
+            if not video:
+                raise serializers.ValidationError("only insert video file")
+            data['content'] = None
+        else:
+            raise serializers.ValidationError("invalied content_type")
+        return data
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -122,7 +141,7 @@ class Cartitemserializer(serializers.ModelSerializer):
 
     class Meta:
         model=Cartitem
-        fields=['id','cart','course','course_title','added_at']
+        fields="__all__"
         read_only_fields=['cart']
 
 class Wishlistserializer(serializers.ModelSerializer):
