@@ -16,7 +16,7 @@ router.register(r'course',CourseViewset)
 router.register(r'topic',TopicViewSet)
 
 router.register(r'enrollCourse',EnrollCourseViewSet)
-#router.register(r'order', PurchsedViewSet)
+router.register(r'buy', PurchsedViewSet, basename="purchased")
 router.register(r'payment',PaymentViewSet)
 
 router.register(r'notification',notificationViewSet,basename="notification")

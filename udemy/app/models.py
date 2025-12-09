@@ -9,7 +9,7 @@ class UserRole(models.Model):
         ('teacher', 'teacher'),
         ('admin', 'admin')
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='role')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='role')
     role = models.CharField(max_length=50, choices=ROLES, default='student')
     image = models.ImageField(upload_to="media/profile_picture/",blank=True,null=True)
     name = models.CharField(max_length=250,blank=True,default="User")

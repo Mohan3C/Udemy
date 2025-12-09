@@ -11,6 +11,7 @@ from .permissions import IsTeacher, Isstudent
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import *
 from .serializers import *
+from django.utils.crypto import get_random_string
 
 # Create your views here.
 class UserViewSet(viewsets.ModelViewSet):
@@ -100,12 +101,37 @@ class TopicViewSet(viewsets.ModelViewSet):
     filter_backends=[filters.SearchFilter]
 
 class PurchsedViewSet(viewsets.ModelViewSet):
-    
+    queryset = Order.objects.all()
     serializer_class = PurchasedSerializer
     permission_classes = [IsAuthenticated]
-    
+   
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        course_id = request.data.get("course")
+
+        try:
+            course = Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return Response({"error": "Course not found"}, status=404)
+        
+        if Order.objects.filter(user=user, course=course, status="paid").exists():
+            return Response({"error":"you already purchased this course"}, status=400)
+        
+        existing_order = Order.objects.filter(user=user, course=course, status="pending").first()
+        if existing_order:
+            return Response({"error":"order already created ", "order_id":existing_order.gatway_order_id })
+            
+        gateway_order_id = "gw_" + get_random_string(12)
+        
+        order = Order.objects.create(user=user, course=course, amount=course.price, gatway_order_id=gateway_order_id, status="pending")
+
+        serializer = PurchasedSerializer(order)
+
+        return Response({"message":"course purchase successfully ", "data":serializer.data},status=201)
+
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset=Payment.objects.all()
@@ -191,7 +217,7 @@ class AddToCartAPIView(APIView):
         
         course = get_object_or_404(Course, id=course_id)
 
-        cart,_ = Cart.objects.get_or_create(user=user)
+        cart,_ = Cart.objects.get_or_create(user_id=user)
 
         if Cartitem.objects.filter(cart=cart, course= course).exists():
             return Response({"error":"Course already exist "})

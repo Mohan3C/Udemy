@@ -90,11 +90,17 @@ class TopicSerializer(serializers.ModelSerializer):
         return data
 
 class PurchasedSerializer(serializers.ModelSerializer):
-    course = CourseSerializer(read_only=True)
+    
     class Meta:
         model = Order
-        fields = ['id','course','gatway_order_id','amount','status']
-        read_only_fields = ['gatway_order_id','status']
+        fields = "__all__"
+        read_only_fields = ['gatway_order_id','status','amount','user']
+
+    def to_representation(self, instance):
+        rep =  super().to_representation(instance)
+        rep['user'] = UserSerializer(instance.user).data
+        rep['course'] = CourseSerializer(instance.course).data
+        return rep
 
 class PaymentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source = "user.username", read_only = True)
