@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('course/<int:pk>/detail/', CourseDetailsAPIView.as_view(), name='course-details'),
     path('api/addtocart/', AddToCartAPIView.as_view(), name="add-to-cart"),
+    path('pay/', pay, name="paymentsuccess"),
 
 
 

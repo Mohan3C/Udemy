@@ -73,7 +73,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='courses')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    gatway_order_id = models.CharField(max_length=100, null=True, blank=True)
+    order_id = models.CharField(max_length=100, null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS, default='pending')
     def __str__(self):
         return f"Order {self.id}"
@@ -87,7 +87,7 @@ class Payment(models.Model):
         ("failed", "failed"),
         ("refunded", "refunded"),
     )
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
 # recive payments details after enrolled course
     razorpay_order_id = models.CharField(max_length=200, blank=True, null=True)
     razorpay_payment_id = models.CharField(max_length=200, blank=True, null=True)
@@ -97,7 +97,7 @@ class Payment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.order_id
+        return f"{self.order}"
     
 class EnrollCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

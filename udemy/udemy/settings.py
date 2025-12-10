@@ -148,3 +148,6 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/zxconline-api/htdocs/api.zxconline.com/Udemy/udemy/media/'
+
+RAZORPAY_KEY_ID = 'rzp_test_RJKzOMnn4i4LG0'
+RAZORPAY_KEY_SECRET = 'skDdejIqeeky1G0kAPw2wbE2'

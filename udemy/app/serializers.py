@@ -94,7 +94,7 @@ class PurchasedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ['gatway_order_id','status','amount','user']
+        read_only_fields = ['order_id','status','amount','user']
 
     def to_representation(self, instance):
         rep =  super().to_representation(instance)
@@ -103,11 +103,11 @@ class PurchasedSerializer(serializers.ModelSerializer):
         return rep
 
 class PaymentSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source = "user.username", read_only = True)
-    course_title = serializers.CharField(source = 'course.title', read_only = True)
+    username = serializers.CharField(source = "order.user.username", read_only = True)
+    course_title = serializers.CharField(source = 'order.course.title', read_only = True)
     class Meta:
         model = Payment
-        fields = ['id','user','username', 'course','course_title','amount','order_id','payment_id','signature','status','created_at']
+        fields = "__all__"
         read_only_fields = ['id','username','course_title','created_at']
 
 class EnrollmentSerializer(serializers.ModelSerializer):

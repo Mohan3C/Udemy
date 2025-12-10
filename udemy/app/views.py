@@ -12,6 +12,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import *
 from .serializers import *
 from django.utils.crypto import get_random_string
+import razorpay
+from django.conf import settings
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 # Create your views here.
 class UserViewSet(viewsets.ModelViewSet):
@@ -116,28 +120,88 @@ class PurchsedViewSet(viewsets.ModelViewSet):
             course = Course.objects.get(id=course_id)
         except Course.DoesNotExist:
             return Response({"error": "Course not found"}, status=404)
-        
+    
+        # check course already purchase 
         if Order.objects.filter(user=user, course=course, status="paid").exists():
             return Response({"error":"you already purchased this course"}, status=400)
         
+        #check course order already created or not 
         existing_order = Order.objects.filter(user=user, course=course, status="pending").first()
         if existing_order:
-            return Response({"error":"order already created ", "order_id":existing_order.gatway_order_id })
-            
-        gateway_order_id = "gw_" + get_random_string(12)
+            return Response(
+                {"error":"order already created ",
+                 "amount":existing_order.amount,
+                "order_id":existing_order.order_id }
+                )
         
-        order = Order.objects.create(user=user, course=course, amount=course.price, gatway_order_id=gateway_order_id, status="pending")
+        amount = int(course.price * 100)
+        raz_order = razorpay_client.order.create({"amount":amount, "currency":"INR","payment_capture":1})
+        
+        # create order for purchased course
+        order = Order.objects.create(
+            user=user, course=course,
+            amount=amount, 
+            order_id=raz_order["id"], 
+            status="pending"
+        )
+        return Response({
+            "message":"Order Created",
+            "order_id":order.order_id,
+            "amount":amount,
+            "key":settings.RAZORPAY_KEY_ID
 
-        serializer = PurchasedSerializer(order)
+        })
 
-        return Response({"message":"course purchase successfully ", "data":serializer.data},status=201)
+        # serializer = PurchasedSerializer(order)
+
+        # return Response({"message":"course purchase successfully ", "data":serializer.data},status=201)
 
 
-class PaymentViewSet(viewsets.ModelViewSet):
-    queryset=Payment.objects.all()
-    serializer_class=PaymentSerializer
+class PaymentViewSet(viewsets.ViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
 
-    
+    @action(detail=False, methods=['post'])
+    def verify(self, request):
+        order_id = request.data.get('razorpay_order_id')
+        payment_id = request.data.get('razorpay_payment_id')
+        signature = request.data.get('razorpay_signature')
+
+        try:
+            order = Order.objects.get(order_id=order_id)
+        except Order.DoesNotExist:
+            return Response({"error":"Invalid order"}, status=400)
+
+        try:
+            data = {
+                "razorpay_order_id": order_id,
+                "razorpay_payment_id": payment_id,
+                "razorpay_signature": signature
+            }
+            razorpay_client.utility.verify_payment_signature(data)
+
+            # create payment entry
+            payment = Payment.objects.create(
+                order=order,
+                razorpay_payment_id=payment_id,
+                razorpay_signature=signature,
+                status="success"
+            )
+
+            # update order status
+            order.status = "paid"
+            order.save()
+
+            return Response({"message":"Payment verified"}, status=200)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
+
+def pay(request):
+    return render(request, "payment.html")
+
+
 class EnrollCourseViewSet(viewsets.ModelViewSet):
     queryset=EnrollCourse.objects.all()
     serializer_class=EnrollmentSerializer
