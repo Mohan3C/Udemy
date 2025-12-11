@@ -34,8 +34,8 @@ router.register(r'buy', PurchsedViewSet, basename="purchased")
 router.register(r'payment',PaymentViewSet)
 
 router.register(r'notification',notificationViewSet,basename="notification")
-
 router.register(r'wishlist',WishlistViewSet)
+router.register(r'coupon', CouponViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

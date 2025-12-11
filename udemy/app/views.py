@@ -293,3 +293,8 @@ class AddToCartAPIView(APIView):
 
         serializer = Cartitemserializer(cart_item)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+class CouponViewSet(viewsets.ModelViewSet):
+    queryset = Coupon.objects.all()
+    serializer_class = CouponSerializer
