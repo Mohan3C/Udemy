@@ -165,6 +165,7 @@ class PaymentViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def verify(self, request):
+
         order_id = request.data.get('razorpay_order_id')
         payment_id = request.data.get('razorpay_payment_id')
         signature = request.data.get('razorpay_signature')
@@ -174,37 +175,39 @@ class PaymentViewSet(viewsets.ViewSet):
         except Order.DoesNotExist:
             return Response({"error":"Invalid order"}, status=400)
 
-        try:
-            data = {
-                "razorpay_order_id": order_id,
-                "razorpay_payment_id": payment_id,
-                "razorpay_signature": signature
-            }
-            razorpay_client.utility.verify_payment_signature(data)
+        data = {
+            "razorpay_order_id": order_id,
+            "razorpay_payment_id": payment_id,
+            "razorpay_signature": signature
+        }
 
-            # create payment entry
-            payment = Payment.objects.create(
+        try:
+            razorpay_client.utility.verify_payment_signature(data)
+        except:
+            return Response({'error':'payment is not verify'})
+        
+        payment = Payment.objects.create(
                 order=order,
+                razorpay_order_id = order_id,
                 razorpay_payment_id=payment_id,
                 razorpay_signature=signature,
                 status="success"
             )
+        
+        
+        # update order status
+        order.status = "paid"
+        order.save()
+        print("payment")
 
-            # update order status
-            order.status = "paid"
-            order.save()
+        # create enrolled course
+       
+        enrolled = EnrollCourse.objects.create(user = order.user, course = order.course, order=order)
+        
+        print(enrolled)
+      
+        return Response({"message":"Payment verified"}, status=200)
 
-            # create enrolled course
-            enroll_obj, created = EnrollCourse.objects.get_or_create(user= order.user , course = order.course, order=order )
-            
-            if not created and enroll_obj.order is None:
-                enroll_obj.order = order
-                enroll_obj.save()
-                
-            return Response({"message":"Payment verified"}, status=200)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=400)
 
 
 def pay(request):
@@ -214,7 +217,7 @@ def pay(request):
 class EnrollCourseViewSet(viewsets.ModelViewSet):
     queryset=EnrollCourse.objects.all()
     serializer_class=EnrollmentSerializer
-    permission_classes=[Isstudent]
+    permission_classes=[IsAuthenticated]
     
     def get_queryset(self):
         return EnrollCourse.objects.filter(user=self.request.user)

@@ -15,3 +15,4 @@ admin.site.register(Notification)
 admin.site.register(Wishlist)
 admin.site.register(EnrollCourse)
 admin.site.register(Order)
+

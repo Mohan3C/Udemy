@@ -111,14 +111,11 @@ class PaymentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','username','course_title','created_at']
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-    course = serializers.StringRelatedField(read_only=True)
-    order_id = serializers.CharField(source='order.order_id', read_only=True)
-
+   
     class Meta:
         model = EnrollCourse
-        fields = ['id', 'user', 'course', 'order_id', 'enrolled_at', 'progress', 'completed_topics']
-        read_only_fields = ['id', 'user', 'course', 'order_id', 'enrolled_at', 'progress']
+        fields = "__all__"
+        read_only_fields = ['user', 'course', 'order', 'enrolled_at']
         
 class CourseDetailSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()

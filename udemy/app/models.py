@@ -104,21 +104,7 @@ class EnrollCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True )
     enrolled_at = models.DateTimeField(auto_now_add=True)
-    progress = models.FloatField(default=0)
-    completed_topics = models.JSONField(default=list)
-
-    def calculate_progress(self):
-        total_topics = self.course.topics.count()
-        if total_topics == 0:
-            return 0.0
-        
-        completed = len(self.completed_topics)
-        return round((completed/total_topics)* 100, 2)
     
-    def save(self, *args, **kwargs):
-        self.progress = self.calculate_progress
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username} - {self.course.title}"
