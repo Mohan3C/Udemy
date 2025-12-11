@@ -15,6 +15,8 @@ from django.utils.crypto import get_random_string
 import razorpay
 from django.conf import settings
 
+
+
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 # Create your views here.
@@ -192,6 +194,13 @@ class PaymentViewSet(viewsets.ViewSet):
             order.status = "paid"
             order.save()
 
+            # create enrolled course
+            enroll_obj, created = EnrollCourse.objects.get_or_create(user= order.user , course = order.course, order=order )
+            
+            if not created and enroll_obj.order is None:
+                enroll_obj.order = order
+                enroll_obj.save()
+                
             return Response({"message":"Payment verified"}, status=200)
 
         except Exception as e:
@@ -210,16 +219,7 @@ class EnrollCourseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return EnrollCourse.objects.filter(user=self.request.user)
     
-    def perform_create(self, serializer):
-        user=self.request.user
-        course=serializer.validated_data['course']
-
-        #prevent duplicate enrollment
-        if EnrollCourse.objects.filter(user=user,course=course).exists():
-            raise serializers.ValidationError("Already enrolled in this course")
-        serializers.save(user=user,progress=0,completed_topics=[])
-    # search_fields=['user_username','title']
-    # filter_backends=[filters.SearchFilter]
+    
 
 class CourseDetailsAPIView(RetrieveAPIView):
     

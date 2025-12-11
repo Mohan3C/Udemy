@@ -102,6 +102,7 @@ class Payment(models.Model):
 class EnrollCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True )
     enrolled_at = models.DateTimeField(auto_now_add=True)
     progress = models.FloatField(default=0)
     completed_topics = models.JSONField(default=list)

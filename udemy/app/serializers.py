@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
     
 class TeacherSerializer(serializers.ModelSerializer):
-    role = VerifyUserProfile(read_only = True)
+    role = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password','role']
@@ -111,14 +111,15 @@ class PaymentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','username','course_title','created_at']
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source = 'user.username', read_only = True)
-    course_title = serializers.CharField(source = 'course.title' , read_only = True)
+    user = serializers.StringRelatedField(read_only=True)
+    course = serializers.StringRelatedField(read_only=True)
+    order_id = serializers.CharField(source='order.order_id', read_only=True)
 
     class Meta:
         model = EnrollCourse
-        fields = ['user', 'username', 'course','course_title','progress','completed_topics','enrolled_at']
-        read_only_fields = ['username','course_title','enrolled_at','progress']
-
+        fields = ['id', 'user', 'course', 'order_id', 'enrolled_at', 'progress', 'completed_topics']
+        read_only_fields = ['id', 'user', 'course', 'order_id', 'enrolled_at', 'progress']
+        
 class CourseDetailSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     category = serializers.StringRelatedField()

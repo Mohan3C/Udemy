@@ -12,10 +12,10 @@
 fetch("http://127.0.0.1:8000/api/buy/", {
     method: "POST",
     headers: {
-        "Authorization": "Token d438a16efaeef2c6d60b1f5027f780ca81c804cb",
+        "Authorization": "Token 538e5a16648d3d72ea9a7786a7ba69291aeb07de",
         "Content-Type": "application/json"
     },
-    body: JSON.stringify({ course: 2 })
+    body: JSON.stringify({ course: 1 })
 })
 .then(res => res.json())
 .then(data => {
@@ -36,7 +36,7 @@ fetch("http://127.0.0.1:8000/api/buy/", {
             fetch("http://127.0.0.1:8000/api/payment/verify/", {
                 method: "POST",
                 headers: {
-                    "Authorization": "Token d438a16efaeef2c6d60b1f5027f780ca81c804cb",
+                    "Authorization": "Token 538e5a16648d3d72ea9a7786a7ba69291aeb07de",
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(response)
