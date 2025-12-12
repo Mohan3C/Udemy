@@ -112,15 +112,8 @@ class EnrollCourse(models.Model):
     
 class Coupon(models.Model):
     code=models.CharField(max_length=200)
-    amount=models.DecimalField(max_digits=7,decimal_places=2)
-    active = models.BooleanField(default=True)
-    start_date = models.DateField(null=True, blank=True)
-    expiry_date = models.DateField(null=True, blank=True)
-
-    def is_valid(self):
-        now = timezone.now()
-        return self.active and self.valid_from <= now <= self.valid_to
-
+    amount=models.DecimalField(max_digits=7,decimal_places=2, null=True, blank=True)
+    
 
     def __str__(self):
         return self.code

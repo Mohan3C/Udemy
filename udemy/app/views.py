@@ -298,3 +298,5 @@ class AddToCartAPIView(APIView):
 class CouponViewSet(viewsets.ModelViewSet):
     queryset = Coupon.objects.all()
     serializer_class = CouponSerializer
+    
+    permission_classes = [IsTeacher]

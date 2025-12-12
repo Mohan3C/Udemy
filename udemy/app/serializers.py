@@ -155,7 +155,10 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = "__all__"
 
-class CouponSerializer(serializers.Serializer):
+class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
-        fields = ['id','code','amount','start_date', 'expiry_date']
+        fields = "__all__"
+
+    def create(self, validated_data):
+        return Coupon.objects.create(**validated_data)
